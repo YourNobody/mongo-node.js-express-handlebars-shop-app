@@ -16,12 +16,14 @@
                         <div class="star"></div>
                     </div>
                     <div class="card-content">
+                        <span class="card-title">Автор</span>
+                        <p class="author">{{'author'}}</p>
                         <span class="card-title">{{title}}</span>
                         <p class="price">{{price}}</p>
                     </div>
                     <div class="card-action actions">
                         <a href="/courses/{{id}}" target="_blank">Открыть курс</a>
-                        {{#if isAuth}}
+                        {{#if @root.isAuth}}
                             <a href="/courses/{{id}}/edit?allow=true">Редактировать</a>
                             <form action="/basket/add" method="post">
                                 <input type="hidden" name="id" value="{{id}}">

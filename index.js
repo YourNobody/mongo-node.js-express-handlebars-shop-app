@@ -13,11 +13,11 @@ const basketRoute = require('./routes/basket')
 const ordersRoute = require('./routes/orders')
 const myCoursesRoute = require('./routes/myCourses')
 const authRoute = require('./routes/auth')
-const User = require('./models/User')
 const varMiddleware = require('./middlewares/variables')
+const wrapUser = require('./middlewares/wrapUser')
 
 const password = '4BJiJRk1cchgWBh2'
-const url = `mongodb+srv://pavel:${password}@cluster0.whey9.mongodb.net/shop`
+const url = `mongodb+srv://pavel:${password}@cluster0.whey9.mongodb.net/shop-myself`
 
 const store = new MongoDBStore({
   uri: url,
@@ -50,6 +50,7 @@ app.use(session({
 }))
 
 app.use(varMiddleware)
+app.use(wrapUser)
 
 app.use('/', homeRoute)
 app.use('/auth', authRoute)
