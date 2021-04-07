@@ -1,0 +1,31 @@
+<h1>Мои курсы</h1>
+
+{{#if courses.length}}
+  <table>
+    <thead>
+      <tr>
+        <th>Название</th>
+        <th>Оценить</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each courses}}
+        <tr>
+          <td>{{title}}</td>
+          <td>
+            <div class="card-rating" style="position: static; max-width: 200px; transform: translate(0,0)" data-to="{{id}}">
+                <div class="star"></div>
+                <div class="star"></div>
+                <div class="star"></div>
+                <div class="star"></div>
+                <div class="star"></div>
+            </div>
+          </td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+
+{{else}}
+  <p>У вас пока нет купленных курсов</p>
+{{/if}}
