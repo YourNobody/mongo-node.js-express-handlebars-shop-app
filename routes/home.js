@@ -3,10 +3,14 @@ const { Router } = require('express')
 const router = new Router()
 
 router.get('/', (req, res) => {
-    res.render('home', {
-        title: 'Home page',
-        isHome: true
-    })
+    try {
+        res.render('home', {
+            title: 'Home page',
+            isHome: true
+        })
+    } catch (err) {
+        console.log(err)
+    }
 })
 
 module.exports = router

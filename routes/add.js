@@ -13,7 +13,7 @@ router.get('/', auth, (req, res) => {
 router.post('/', auth, async (req, res) => {
     const { title, img, price } = req.body
     const course = new Course({
-        title, price, img, 
+        title, price, img,
         userId: req.user._id
     })
 

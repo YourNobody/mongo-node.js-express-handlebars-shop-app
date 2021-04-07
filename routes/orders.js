@@ -4,7 +4,9 @@ const auth = require('../middlewares/auth')
 const router = new Router()
 
 router.get('/', auth, async (req, res) => {
-  const orders = await Order.find()
+  const orders = await Order.find({
+    'user.userId': req.user._id
+  })
     .populate('user.userId', 'name email')
 
   const flatOrders = orders.map((order) => {

@@ -33,6 +33,11 @@
     color: rgb(255, 255, 0);
 }
 
+.votes {
+    transform: translate(-50%, -270%);
+    color: white;
+}
+
 .hide {
     opacity: 0;
 }
@@ -59,3 +64,21 @@
 .star.selected {
 background-color: red;
 }
+
+.card-title.title {
+    font-weight: 700 !important;
+}
+
+.card-image {
+    position: relative !important;
+    min-height: 256px;
+    max-height: 256px;
+}
+
+.card-image img {
+    position: absolute !important;
+    height: 100% !important;
+    object-fit: cover;
+}
+
+

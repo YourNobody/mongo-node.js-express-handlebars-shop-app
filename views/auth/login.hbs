@@ -1,3 +1,18 @@
+<style>
+  .alert {
+    padding: 0.5rem 1rem;
+    margin: 0.5rem 0 1rem;
+    text-align: center;
+    color: red;
+    background-color: rgba(255, 0, 0, 0.25);
+    border-radius: 5px;
+  }
+
+  .success {
+    color: green;
+    background-color: rgba(0, 255, 0, 0.25);
+  }
+</style>
 <div class="row" style="margin-top: 10px;">
   <div class="col s12">
     <ul class="tabs">
@@ -8,12 +23,18 @@
 
   <div class="auth">
     <div id="login" class="col s6 offset-s3">
-{{!-- 
+
       {{#if loginError}}
         <div class="alert">
           {{loginError}}
         </div>
-      {{/if}} --}}
+      {{/if}}
+
+      {{#if registerSuccess}}
+        <div class="alert success">
+          {{registerSuccess}}
+        </div>
+      {{/if}}
 
       <h3 style="text-align: center;">Войти в аккаунт</h3>
       <form action="/auth/login" method="post">
@@ -36,12 +57,12 @@
     </div>
 
     <div id="register" class="col s6 offset-s3">
-{{!-- 
+
       {{#if registerError}}
         <div class="alert">
           {{registerError}}
         </div>
-      {{/if}} --}}
+      {{/if}}
 
       <h3 style="text-align: center;">Регистрация</h3>
       <form action="/auth/register" method="post">
@@ -69,8 +90,8 @@
           <label for="confirm">Пароль еще раз</label>
           <span class="helper-text" data-error="Введите пароль еще раз"></span>
         </div>
-{{!-- 
-        <input type="hidden" name="_csrf" value="{{csrf}}"> --}}
+
+        <input type="hidden" name="_csrf" value="{{csrf}}">
 
         <button class="btn btn-danger" type="submit">Зарегистрироваться</button>
       </form>

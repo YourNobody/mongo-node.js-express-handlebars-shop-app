@@ -1,10 +1,36 @@
 const { Router } = require('express')
 const Course = require('../models/Course')
-const User = require('../models/User')
 const router = new Router()
 
 router.get('/', async (req, res) => {
     const courses = await Course.find()
+      .populate('userId', 'email name _id')
+      .then((crses) => {
+        if (req.session.isAuthenticated) {
+          return crses.map((crs) => {
+            const {email, name, _id} = crs.userId._doc
+            const {_id: id} = crs._doc
+            delete crs._doc._id
+            delete crs._doc.userId
+            return {
+              isAuthor: req.user._id.toString() === _id.toString(),
+              ...crs._doc,
+              id,
+              author: name + ' ' + `<${email}>`
+            }
+          })
+        } else {
+          return crses.map((crs) => {
+            const {email, name} = crs.userId._doc
+            delete crs._doc.userId
+            return {
+              ...crs._doc,
+              author: name + ' ' + `<${email}>`
+            }
+          })
+        }
+      })
+
     courses.forEach((course) => {
       course.rate = course.rating.reduce((acc, curr, index, array) => {
         if (index !== array.length - 1) return acc += curr.rate
@@ -14,6 +40,7 @@ router.get('/', async (req, res) => {
           return Math.trunc(acc)
         }
       }, 0)
+      course.votes = course.rating.length
     })
 
     process.env.NODE_ENV !== 'test' && res.render('courses', {
@@ -46,8 +73,10 @@ router.post('/rating/:id/', async (req, res) => {
   })
 
   let idx
+
+  //если оценка текущего пользователя существует то возвращаем true
   const existing = course.rating.reduce((acc, obj, index) => {
-    if (obj.userId.toString() === id.toString()) {
+    if (obj.userId.toString() === req.user.id.toString()) {
       acc = true
       idx = index
     }

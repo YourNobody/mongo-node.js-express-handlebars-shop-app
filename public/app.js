@@ -5,17 +5,35 @@ function toCurrency(price) {
   }).format(price);
 }
 
+function toDate(date) {
+  return new Intl.DateTimeFormat("ru-RU", {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit'
+  }).format(new Date(date));
+}
+
 document.querySelectorAll(".price").forEach((item) => {
   item.textContent = toCurrency(item.textContent);
+});
+
+document.querySelectorAll(".date").forEach((item) => {
+  item.textContent = toDate(item.textContent);
 });
 
 const $basket = document.getElementById("card");
 if ($basket) {
   $basket.addEventListener("click", (event) => {
     if (event.target.classList.contains("js-remove")) {
-      const { id } = event.target.dataset;
+      const { id, csrf } = event.target.dataset;
       fetch("/basket/remove/" + id, {
         method: "DELETE",
+        headers: {
+          'X-XSRF-TOKEN': csrf
+        }
       })
         .then((res) => res.json())
         .then((basket) => {

@@ -6,7 +6,10 @@ const router = new Router()
 
 router.get('/login', (req, res) => {
   res.render('auth/login', {
-    isLogin: true
+    isLogin: true,
+    loginError: req.flash('loginError'),
+    registerError: req.flash('registerError'),
+    registerSuccess: req.flash('registerSuccess')
   })
 })
 
@@ -26,10 +29,12 @@ router.post('/login', async (req, res) => {
       })
 
     } else {
+      req.flash('loginError', 'Неверный пароль')
       res.redirect('/auth/login#register')
     }
 
   } else {
+    req.flash('loginError', 'Пользователя с таким Email не существует')
     res.redirect('/auth/login#login')
   }
 
@@ -40,15 +45,24 @@ router.post('/register', async (req, res) => {
   const candidate = await User.findOne({ email })
 
   if (candidate) {
+    req.flash('registerError', 'Пользователь с таким Email уже существует')
     res.redirect('/auth/login#register')
   } else {
     const hashPassword = bcrypt.hashSync(password)
+
+    if (confirm !== password) {
+      req.flash('registerError', 'Пароль не подтвержден')
+      return res.redirect('/auth/login#register')
+    }
+
     const user = new User({
       email, name,
       password: hashPassword, 
       cart: { items: [] }
     })
     await user.save()
+
+    req.flash('registerSuccess', 'Регистрация прошла успешно')
     res.redirect('/auth/login#login')
   }
 })
