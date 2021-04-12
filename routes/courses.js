@@ -2,6 +2,10 @@ const { Router } = require('express')
 const Course = require('../models/Course')
 const router = new Router()
 
+function isOwner(course, currUser) {
+  return course.userId.toString() === currUser._id.toString()
+}
+
 router.get('/', async (req, res) => {
     const courses = await Course.find()
       .populate('userId', 'email name _id')
@@ -60,7 +64,8 @@ router.get('/:id', async (req, res) => {
 
 router.post('/remove', async (req, res) => {
     await Course.deleteOne({
-        _id: req.body.id 
+        _id: req.body.id,
+        userId: req.user._id 
     })
     res.redirect('/courses')
 })
@@ -99,17 +104,31 @@ router.post('/rating/:id/', async (req, res) => {
 
 router.get('/:id/edit', async (req, res) => {
     if (!req.query.allow) {
-        res.redirect('/')
+      res.redirect('/')
     }
-    const course = await Course.findById(req.params.id)
+    let course = await Course.findById(req.params.id)
+
+    if (!isOwner(course, req.user)) {
+      return res.redirect('/courses')
+    }
+
+    const rating = JSON.stringify(course.rating)
     res.render('edit', {
-        title: 'Редактирование информации о курсе',
-        course,
+      title: 'Редактирование информации о курсе',
+      course,
+      rating
     })
 })
 
 router.post('/edit', async (req, res) => {
     const { id } = req.body
+    const course = await User.findOne({_id: id})
+
+    if (!isOwner(course, req.user)) {
+      return res.redirect('/courses')
+    }
+
+    req.body.rating = JSON.parse(req.body.rating)
     delete req.body.id
     await Course.findByIdAndUpdate(id, req.body)
     res.redirect('/courses')

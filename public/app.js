@@ -62,6 +62,7 @@ if ($basket) {
 
 const $ratings = document.querySelectorAll('.card-rating')
 $ratings.forEach((item) => {
+    const {csrf} = item.dataset
     const stars = Array.from(item.querySelectorAll('.star'))
     
     if (item.hasAttribute('view')) {
@@ -83,7 +84,7 @@ $ratings.forEach((item) => {
           while (i < array.length) {
             array[i++].style.backgroundColor = "";
           }
-          setRating(item.dataset.to, inx + 1);
+          setRating(item.dataset.to, inx + 1, csrf);
         });
         star.addEventListener("mouseover", (event) => {
           if (item.dataset && +item.dataset.rating > 0) {
@@ -120,11 +121,12 @@ $ratings.forEach((item) => {
     }
 })
 
-function setRating(id, rating) {
+function setRating(id, rating, csrf) {
   fetch(`/courses/rating/${id}?rating=${rating}`, {
     method: "POST",
     headers: {
       "Content-type": "application/json; charset=utf-8",
+      'X-XSRF-TOKEN': csrf
     },
   });
 }
