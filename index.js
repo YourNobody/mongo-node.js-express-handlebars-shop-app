@@ -7,7 +7,6 @@ const MongoDBStore = require('connect-mongodb-session')(session)
 const csrf = require('csurf')
 const flash = require('connect-flash')
 const { allowInsecurePrototypeAccess } = require('@handlebars/allow-prototype-access')
-const C = require('./constants/constants')
 const homeRoute = require('./routes/home')
 const addRoute = require('./routes/add')
 const coursesRoute = require('./routes/courses')
@@ -17,12 +16,10 @@ const myCoursesRoute = require('./routes/myCourses')
 const authRoute = require('./routes/auth')
 const varMiddleware = require('./middlewares/variables')
 const wrapUser = require('./middlewares/wrapUser')
-
-const password = '4BJiJRk1cchgWBh2'
-const url = `mongodb+srv://pavel:${password}@cluster0.whey9.mongodb.net/shop-myself`
+const keys = require('./keys/index')
 
 const store = new MongoDBStore({
-  uri: url,
+  uri: keys.MONGODB_URI,
   collection: 'sessions'
 })
 
@@ -45,7 +42,7 @@ app.use(
 
 
 app.use(session({
-  secret: `i've been banned from haven`,
+  secret: keys.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   store
@@ -67,14 +64,14 @@ app.use('/my-courses', myCoursesRoute)
 
 void async function() {
   try {
-    await mongoose.connect(url, {
+    await mongoose.connect(keys.MONGODB_URI, {
       useUnifiedTopology: true,
       useNewUrlParser: true,
       useFindAndModify: false
     })
 
-    process.env.NODE_ENV !== 'test' && app.listen(C.PORT, () => {
-      console.log('Server is running on port ' + C.PORT)
+    process.env.NODE_ENV !== 'test' && app.listen(keys.PORT, () => {
+      console.log('Server is running on port ' + keys.PORT)
     })
   } catch (error) {
     console.error(error)

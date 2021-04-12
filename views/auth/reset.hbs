@@ -1,0 +1,38 @@
+<style>
+  .alert {
+    padding: 0.5rem 1rem;
+    margin: 0.5rem 0 1rem;
+    text-align: center;
+    color: red;
+    background-color: rgba(255, 0, 0, 0.25);
+    border-radius: 5px;
+  }
+
+  .success {
+    color: green;
+    background-color: rgba(0, 255, 0, 0.25);
+  }
+</style>
+<div class="auth">
+  <div class="col s6 offset-s3">
+
+    {{#if error}}
+      <div class="alert">
+        {{error}}
+      </div>
+    {{/if}}
+
+    <h3 style="text-align: center;">{{title}}</h3>
+    <form action="/auth/reset" method="post">
+      <div class="input-field col s6">
+        <input id="email" type="email" name="email" class="validate" required>
+        <label for="email">Email</label>
+        <span class="helper-text" data-error="Введите почту"></span>
+      </div>
+
+      <input type="hidden" name="_csrf" value="{{csrf}}">
+
+      <button class="btn btn-danger" type="submit">Сбросить</button>
+    </form>
+  </div>
+</div>
