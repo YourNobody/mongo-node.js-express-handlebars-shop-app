@@ -30,6 +30,7 @@ router.get('/', auth, async (req, res) => {
   })
 
   res.render('orders', {
+    title: 'Мои заказы',
     isOrders: true,
     orders: flatOrders
   })
@@ -65,7 +66,7 @@ router.post('/', auth, async (req, res) => {
   await order.save()
   await req.user.cleanCart()
 
-  res.redirect('/orders')
+  res.redirect('/profile/orders')
 })
 
 

@@ -2,6 +2,7 @@ const express = require('express')
 const ExpHandlebars = require('express-handlebars')
 const Handlebars = require('handlebars')
 const mongoose = require('mongoose')
+const path = require('path')
 const session = require('express-session')
 const MongoDBStore = require('connect-mongodb-session')(session)
 const csrf = require('csurf')
@@ -13,6 +14,8 @@ const coursesRoute = require('./routes/courses')
 const basketRoute = require('./routes/basket')
 const ordersRoute = require('./routes/orders')
 const myCoursesRoute = require('./routes/myCourses')
+const profileRoute = require('./routes/profile')
+const settingsRoute = require('./routes/settings')
 const authRoute = require('./routes/auth')
 const varMiddleware = require('./middlewares/variables')
 const wrapUser = require('./middlewares/wrapUser')
@@ -33,13 +36,14 @@ app.engine('hbs', ExpHandlebars({
 app.set('view engine', 'hbs')
 app.set('views', 'views')
 
-app.use(express.static('public'))
+app.use(express.static(path.join(__dirname, 'public')))
+app.use('/images', express.static(path.join(__dirname, 'images')))
+
 app.use(
     express.urlencoded({
         extended: true
     })
 )
-
 
 app.use(session({
   secret: keys.SESSION_SECRET,
@@ -58,9 +62,11 @@ app.use('/', homeRoute)
 app.use('/auth', authRoute)
 app.use('/add', addRoute)
 app.use('/courses', coursesRoute)
-app.use('/basket', basketRoute)
-app.use('/orders', ordersRoute)
-app.use('/my-courses', myCoursesRoute)
+app.use('/profile/basket', basketRoute)
+app.use('/profile/orders', ordersRoute)
+app.use('/profile/my-courses', myCoursesRoute)
+app.use('/profile/settings', settingsRoute)
+app.use('/profile', profileRoute)
 
 void async function() {
   try {

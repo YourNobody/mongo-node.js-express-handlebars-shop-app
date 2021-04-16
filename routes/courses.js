@@ -48,6 +48,7 @@ router.get('/', async (req, res) => {
     })
 
     process.env.NODE_ENV !== 'test' && res.render('courses', {
+        title: 'Все курсы', 
         courses,
         isCourses: true
     })
@@ -81,7 +82,8 @@ router.post('/rating/:id/', async (req, res) => {
 
   //если оценка текущего пользователя существует то возвращаем true
   const existing = course.rating.reduce((acc, obj, index) => {
-    if (obj.userId.toString() === req.user.id.toString()) {
+    if (!!acc) return acc
+    if (obj.userId.toString() === req.user._id.toString()) {
       acc = true
       idx = index
     }
@@ -91,7 +93,7 @@ router.post('/rating/:id/', async (req, res) => {
   if (!existing) {
     course.rating.push({
       rate: rating,
-      userId: id
+      userId: req.user._id
     })
   } else {
     course.rating[idx].rate = rating
@@ -99,7 +101,7 @@ router.post('/rating/:id/', async (req, res) => {
 
   await Course.findByIdAndUpdate(id, course)
 
-  res.send(201)
+  res.status(201)
 })
 
 router.get('/:id/edit', async (req, res) => {

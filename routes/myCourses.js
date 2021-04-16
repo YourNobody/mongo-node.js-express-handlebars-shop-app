@@ -22,6 +22,7 @@ router.get('/', auth, async (req, res) => {
     })
 
   res.render('myCourses', {
+    title: 'Мои курсы',
     isMyCourses: true,
     courses,
   })

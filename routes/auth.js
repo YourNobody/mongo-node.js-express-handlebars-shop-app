@@ -1,15 +1,17 @@
 const {Router} = require('express')
+const {validationResult} = require('express-validator/check')
 const bcrypt = require('bcryptjs')
 const crypto = require('crypto')
 const User = require('../models/User')
 const sendRegistrationMail = require('../emails/sendRegMail')
+const {registrationValidators} = require('../utils/validators')
 const sendResetMail = require('../emails/sendResetMail')
-const nodemailer = require('nodemailer')
 
 const router = new Router()
 
 router.get('/login', (req, res) => {
   res.render('auth/login', {
+    title: 'Авторизация',
     isLogin: true,
     loginError: req.flash('loginError'),
     registerError: req.flash('registerError'),
@@ -35,7 +37,7 @@ router.post('/login', async (req, res) => {
 
       } else {
         req.flash('loginError', 'Неверный пароль')
-        res.redirect('/auth/login#register')
+        res.redirect('/auth/login#login')
       }
 
     } else {
@@ -47,34 +49,40 @@ router.post('/login', async (req, res) => {
   }
 })
 
-router.post('/register', async (req, res) => {
-  const {email, password, name, confirm} = req.body
-  const candidate = await User.findOne({ email })
+router.post('/register', registrationValidators, async (req, res) => {
+  const {email, password, name} = req.body
+  const errors = validationResult(req)
 
-  if (candidate) {
-    req.flash('registerError', 'Пользователь с таким Email уже существует')
-    res.redirect('/auth/login#register')
-  } else {
-    const hashPassword = bcrypt.hashSync(password, 10)
-
-    if (confirm !== password) {
-      req.flash('registerError', 'Пароль не подтвержден')
-      return res.redirect('/auth/login#register')
+  try {
+    if (!errors.isEmpty()) {
+      req.flash('registerError', errors.array()[0].msg)
+      return res.status(422).render('auth/login', {
+        title: 'Авторизация',
+        isLogin: true,
+        loginError: req.flash('loginError'),
+        registerError: req.flash('registerError'),
+        registerSuccess: req.flash('registerSuccess'),
+        data: {
+          email, name
+        }
+      })
     }
 
+    const hashPassword = bcrypt.hashSync(password, 10)
     const user = new User({
       email, name,
       password: hashPassword, 
       cart: { items: [] }
     })
-
+    
     await user.save()
-
     req.flash('registerSuccess', 'Регистрация прошла успешно')
     res.redirect('/auth/login#login')
-  
+    
     sendRegistrationMail(email)
-      .catch((err) => console.error(err))
+
+  } catch (error) {
+    console.error(error)
   }
 })
 

@@ -1,0 +1,25 @@
+<h1>Профиль</h1>
+
+<div class="row">
+  <div class="col s4">
+    {{#if user.avatarURL}}
+      <img
+      class="avatar"
+      src="/{{user.avatarURL}}" 
+      alt="avatar-{{user.name}}"
+      > 
+    {{else}}
+      <h4>Аватара нет</h4>
+    {{/if}}
+    <p>Имя: <span class="uname">{{user.name}}</span></p>
+    <p>Почта: <span>{{user.email}}</span></p>     
+  </div>
+  <div class="col s8">
+    <div class="collection">
+      <a href="/profile/my-courses" class="collection-item">Мои курсы</a>
+      <a href="/profile/orders" class="collection-item">Мои заказы</a>
+      <a href="/profile/basket" class="collection-item">Корзина</a>
+      <a href="/profile/settings" class="collection-item">Настройки</a>
+    </div>
+  </div>
+</div>

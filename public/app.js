@@ -29,7 +29,7 @@ if ($basket) {
   $basket.addEventListener("click", (event) => {
     if (event.target.classList.contains("js-remove")) {
       const { id, csrf } = event.target.dataset;
-      fetch("/basket/remove/" + id, {
+      fetch("/profile/basket/remove/" + id, {
         method: "DELETE",
         headers: {
           'X-XSRF-TOKEN': csrf

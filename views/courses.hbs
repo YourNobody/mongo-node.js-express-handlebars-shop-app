@@ -31,7 +31,7 @@
                             {{#if isAuthor}}
                                 <a href="/courses/{{id}}/edit?allow=true">Редактировать</a>
                             {{/if}}
-                            <form action="/basket/add" method="post">
+                            <form action="/profile/basket/add" method="post">
                                 <input type="hidden" name="id" value="{{id}}">
                                 <input type="hidden" name="_csrf" value="{{@root.csrf}}">
                                 <button class="btn btn-primary" type="submit">Купить</button>

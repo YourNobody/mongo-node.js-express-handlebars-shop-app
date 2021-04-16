@@ -5,7 +5,7 @@ const router = new Router()
 router.get('/', (req, res) => {
     try {
         res.render('home', {
-            title: 'Home page',
+            title: 'Главная страница',
             isHome: true
         })
     } catch (err) {
