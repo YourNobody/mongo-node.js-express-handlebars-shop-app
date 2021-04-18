@@ -57,7 +57,6 @@ exports.registrationValidators = [
   body('name')
     .isLength({min: 2})
     .withMessage(regMsgs.name)
-    .toLowerCase()
     .trim()
 ]
 
