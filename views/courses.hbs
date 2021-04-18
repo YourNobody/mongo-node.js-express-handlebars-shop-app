@@ -1,5 +1,11 @@
 <h1>Курсы</h1>
 
+{{#if addSuccess}}
+    <div class="alert success">
+        {{addSuccess}}
+    </div>
+{{/if}}
+
 {{#if courses.length}}
         <div class="row">
     {{#each courses}}
@@ -23,7 +29,7 @@
                         <span class="card-title">Автор:</span>
                         <p class="author">{{author}}</p>
                         <br>
-                        <p class="price">{{price}}</p>
+                        <p class="price">{{price}}</p> 
                     </div>
                     <div class="card-action actions">
                         <a href="/courses/{{id}}" target="_blank">Открыть курс</a>

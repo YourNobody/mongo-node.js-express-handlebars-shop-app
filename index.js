@@ -7,6 +7,8 @@ const session = require('express-session')
 const MongoDBStore = require('connect-mongodb-session')(session)
 const csrf = require('csurf')
 const flash = require('connect-flash')
+const helmet = require('helmet')
+const compression = require('compression')
 const { allowInsecurePrototypeAccess } = require('@handlebars/allow-prototype-access')
 const homeRoute = require('./routes/home')
 const addRoute = require('./routes/add')
@@ -18,8 +20,10 @@ const profileRoute = require('./routes/profile')
 const settingsRoute = require('./routes/settings')
 const authRoute = require('./routes/auth')
 const varMiddleware = require('./middlewares/variables')
+const page404Handler = require('./middlewares/page404')
 const wrapUser = require('./middlewares/wrapUser')
 const keys = require('./keys/index')
+
 
 const store = new MongoDBStore({
   uri: keys.MONGODB_URI,
@@ -52,6 +56,18 @@ app.use(session({
   store
 }))
 
+app.use( helmet({
+  contentSecurityPolicy: {
+    directives: {
+      ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+      "img-src": ["'self'", "https:"],
+      "script-src-elem": ["'self'", "https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js", "'unsafe-inline'" ] 
+    },
+  },
+  })
+)
+
+app.use(compression())
 app.use(csrf())
 app.use(flash())
 
@@ -62,11 +78,13 @@ app.use('/', homeRoute)
 app.use('/auth', authRoute)
 app.use('/add', addRoute)
 app.use('/courses', coursesRoute)
+app.use('/profile', profileRoute)
 app.use('/profile/basket', basketRoute)
 app.use('/profile/orders', ordersRoute)
 app.use('/profile/my-courses', myCoursesRoute)
 app.use('/profile/settings', settingsRoute)
-app.use('/profile', profileRoute)
+
+app.use(page404Handler)
 
 void async function() {
   try {
@@ -75,8 +93,7 @@ void async function() {
       useNewUrlParser: true,
       useFindAndModify: false
     })
-
-    process.env.NODE_ENV !== 'test' && app.listen(keys.PORT, () => {
+    app.listen(keys.PORT, () => {
       console.log('Server is running on port ' + keys.PORT)
     })
   } catch (error) {

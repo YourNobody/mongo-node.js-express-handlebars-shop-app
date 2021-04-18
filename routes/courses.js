@@ -26,9 +26,12 @@ router.get('/', async (req, res) => {
         } else {
           return crses.map((crs) => {
             const {email, name} = crs.userId._doc
+            const {_id: id} = crs._doc
+            delete crs._doc._id
             delete crs._doc.userId
             return {
               ...crs._doc,
+              id,
               author: name + ' ' + `<${email}>`
             }
           })
@@ -47,19 +50,31 @@ router.get('/', async (req, res) => {
       course.votes = course.rating.length
     })
 
-    process.env.NODE_ENV !== 'test' && res.render('courses', {
-        title: 'Все курсы', 
-        courses,
-        isCourses: true
+    res.render('courses', {
+      title: 'Все курсы', 
+      courses,
+      isCourses: true,
+      addSuccess: req.flash('addSuccess')
     })
-    process.env.NODE_ENV === 'test' && res.send(courses)
 })
 
 router.get('/:id', async (req, res) => {
-    const course = await Course.findById(req.params.id)
+    let course = await Course.findById(req.params.id)
+    course = JSON.parse(JSON.stringify(course))
+    course.rate = course.rating.reduce((acc, curr, index, array) => {
+      if (index !== array.length - 1) return acc += curr.rate
+      else {
+        acc += curr.rate
+        acc = acc / array.length
+        return Math.trunc(acc)
+      }
+    }, 0)
+    course.votes = course.rating.length
+
     res.render('course', {
-        layout: 'open',
-        ...course
+      title: course.title,
+      layout: 'open',
+      course
     })
 })
 

@@ -40,6 +40,7 @@ router.get('/', auth, async (req, res) => {
 router.post('/add', auth, async (req, res) => {
   const course = await Course.findById(req.body.id)
   await req.user.addToCart(course)
+  req.flash('addSuccess', 'Курс добавлен в корзину')
   res.redirect('/courses')
 })
 
